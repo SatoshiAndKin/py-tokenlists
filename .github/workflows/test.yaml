@@ -7,13 +7,12 @@ env:
 
 jobs:
     linting:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: 3.8
 
@@ -30,17 +29,16 @@ jobs:
           run: flake8 ./tokenlists ./tests ./setup.py
 
     functional:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         strategy:
             matrix:
                 python-version: [3.7, 3.8]
 
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: ${{ matrix.python-version }}
 
@@ -51,16 +49,15 @@ jobs:
           run: pytest -m "not fuzzing" -s
 
     fuzzing:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         strategy:
             fail-fast: true
 
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: 3.8
 
