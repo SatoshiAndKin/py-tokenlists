@@ -1,4 +1,7 @@
-on: ["push", "pull_request"]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 name: Test
 
@@ -17,7 +20,7 @@ jobs:
               python-version: 3.8
 
         - name: Install Dependencies
-          run: pip install .[lint]
+          run: pip install '.[lint]'
 
         - name: Run Black
           run: black --check .
@@ -43,7 +46,7 @@ jobs:
               python-version: ${{ matrix.python-version }}
 
         - name: Install Dependencies
-          run: pip install .[test]
+          run: pip install '.[test]'
 
         - name: Run Tests
           run: pytest -m "not fuzzing" -s
@@ -62,7 +65,7 @@ jobs:
               python-version: 3.8
 
         - name: Install Dependencies
-          run: pip install .[test]
+          run: pip install '.[test]'
 
         - name: Run Tests
           run: pytest -m fuzzing --no-cov -s
