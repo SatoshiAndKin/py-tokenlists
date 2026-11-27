@@ -63,6 +63,7 @@ class TokenList:
     keywords: Optional[List[str]] = None
     tags: Optional[Dict[TagId, Tag]] = None
     logoURI: Optional[URI] = URI("")
+    _extra: Dict = dc.field(default_factory=dict, init=False, repr=False, compare=False)
 
     def __iter__(self) -> Iterator[TokenInfo]:
         for token_info in self.tokens:
@@ -73,10 +74,15 @@ class TokenList:
         data = deepcopy(data)
         data["version"] = Version(**data["version"])
         data["tokens"] = [TokenInfo.from_dict(t) for t in data["tokens"]]
-        return TokenList(**data)
+        known_fields = {field.name for field in dc.fields(cls) if field.init}
+        extra = {key: data.pop(key) for key in list(data) if key not in known_fields}
+        token_list = cls(**data)
+        token_list._extra = extra
+        return token_list
 
     def to_dict(self) -> Dict:
         data = dc.asdict(self)
+        extra = data.pop("_extra")
         data["version"] = {
             "major": self.version.major,
             "minor": self.version.minor,
@@ -89,4 +95,5 @@ class TokenList:
             del data["tags"]
         if self.logoURI == "":
             del data["logoURI"]
+        data.update(extra)
         return data

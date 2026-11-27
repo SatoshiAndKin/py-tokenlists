@@ -10,10 +10,12 @@ extras_require = {
         "pytest-coverage",
         "PyGithub>=1.54,<2.0",
         "hypothesis<6.0",
+        "importlib-metadata<5; python_version < '3.8'",
         "hypothesis-jsonschema==0.19.0",
     ],
     "lint": [
         "black==20.8b1",
+        "click<8.1",
         "flake8==3.8.4",
         "isort>=5.7.0,<6",
         "mypy==0.790",

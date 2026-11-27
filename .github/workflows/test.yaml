@@ -1,4 +1,7 @@
-on: ["push", "pull_request"]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 name: Test
 
@@ -7,18 +10,17 @@ env:
 
 jobs:
     linting:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: 3.8
 
         - name: Install Dependencies
-          run: pip install .[lint]
+          run: pip install '.[lint]'
 
         - name: Run Black
           run: black --check .
@@ -30,42 +32,45 @@ jobs:
           run: flake8 ./tokenlists ./tests ./setup.py
 
     functional:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         strategy:
             matrix:
                 python-version: [3.7, 3.8]
 
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: ${{ matrix.python-version }}
 
         - name: Install Dependencies
-          run: pip install .[test]
+          run: pip install '.[test]'
 
         - name: Run Tests
           run: pytest -m "not fuzzing" -s
 
     fuzzing:
-        runs-on: ubuntu-latest
-
+        runs-on: ubuntu-22.04
         strategy:
             fail-fast: true
 
         steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
         - name: Setup Python
-          uses: actions/setup-python@v2
+          uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
           with:
               python-version: 3.8
 
         - name: Install Dependencies
-          run: pip install .[test]
+          run: pip install '.[test]'
 
         - name: Run Tests
           run: pytest -m fuzzing --no-cov -s
+
+# Superseded PR validation must not hold runner capacity.
+concurrency:
+  group: pr-ci-test.yaml-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
